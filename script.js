@@ -1,37 +1,19 @@
 const questions = [
     {
-        question: "What is the primary function of Git in DevOps?",
+        question: "What is DevOps?",
         options: [
-            "To monitor system performance",
-            "To automate code delivery",
-            "To track code changes",
-            "To manage cloud infrastructure"
+            "A programming language",
+            "A set of practices, tools, and cultural philosophies",
+            "A database management system",
+            "A cloud service provider"
         ],
-        answer: "To track code changes",
+        answer: "A set of practices, tools, and cultural philosophies",
         explanation: {
-            correct: "Git is a version control system that tracks changes in source code during software development.",
+            correct: "DevOps improves collaboration between development and operations teams, aiming for faster software delivery and continuous improvement.",
             incorrect: {
-                "To monitor system performance": "Monitoring is done using tools like Prometheus and Grafana, not Git.",
-                "To automate code delivery": "CI/CD tools like Jenkins automate code delivery, not Git.",
-                "To manage cloud infrastructure": "Terraform and Ansible manage infrastructure, not Git."
-            }
-        }
-    },
-    {
-        question: "What is Docker primarily used for?",
-        options: [
-            "Cloud computing",
-            "Version control",
-            "Containerization",
-            "Load balancing"
-        ],
-        answer: "Containerization",
-        explanation: {
-            correct: "Docker is a containerization tool that packages applications and dependencies together.",
-            incorrect: {
-                "Cloud computing": "Docker is not a cloud service, though it can be used in cloud environments.",
-                "Version control": "Git is a version control system, not Docker.",
-                "Load balancing": "Load balancers distribute traffic but Docker packages applications."
+                "A programming language": "DevOps is not a language but a methodology integrating development and operations.",
+                "A database management system": "DevOps covers various software engineering practices beyond databases.",
+                "A cloud service provider": "DevOps can be implemented on cloud platforms but is not itself a cloud provider."
             }
         }
     }
@@ -43,38 +25,22 @@ let answered = false;
 
 function displayQuestion() {
     const questionData = questions[currentQuestionIndex];
-
     document.getElementById('question').innerText = questionData.question;
-
     const optionsContainer = document.getElementById('options');
     optionsContainer.innerHTML = "";
-
     const resultContainer = document.getElementById('result');
-    resultContainer.innerHTML = ""; // Clear previous result messages
+    resultContainer.innerHTML = "";
 
     questionData.options.forEach((option) => {
         const button = document.createElement("button");
         button.innerText = option;
         button.classList.add("option");
-        button.setAttribute("tabindex", "0");
         button.onclick = () => checkAnswer(option, button);
         optionsContainer.appendChild(button);
     });
 
-    // Add Next Button but hide it initially
-    let nextButton = document.getElementById("nextButton");
-    if (!nextButton) {
-        nextButton = document.createElement("button");
-        nextButton.innerText = "Next Question";
-        nextButton.id = "nextButton";
-        nextButton.style.display = "none"; // Hidden until answer is selected
-        nextButton.onclick = nextQuestion;
-        document.getElementById("quiz-container").appendChild(nextButton);
-    } else {
-        nextButton.style.display = "none"; // Hide when new question loads
-    }
-
-    answered = false;
+    const nextButton = document.getElementById("nextButton");
+    nextButton.style.display = "none"; // Hide Next Button initially
 }
 
 function checkAnswer(selectedOption, button) {
@@ -83,54 +49,31 @@ function checkAnswer(selectedOption, button) {
 
     const questionData = questions[currentQuestionIndex];
     const resultContainer = document.getElementById('result');
-    resultContainer.innerHTML = ""; // Clear previous result messages
-
-    const explanationContainer = document.createElement("div");
-
+    resultContainer.innerHTML = "";
+    
     if (selectedOption === questionData.answer) {
         score++;
         button.classList.add("correct");
-        explanationContainer.innerHTML += `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
+        resultContainer.innerHTML = `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
     } else {
         button.classList.add("incorrect");
-        explanationContainer.innerHTML += `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
+        resultContainer.innerHTML = `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
     }
 
-    // Show explanations for all options
-    explanationContainer.innerHTML += "<h4>Why other options are incorrect?</h4>";
-    Object.keys(questionData.explanation.incorrect).forEach((option) => {
-        explanationContainer.innerHTML += `<p><strong>${option}:</strong> ${questionData.explanation.incorrect[option]}</p>`;
-    });
-
-    resultContainer.appendChild(explanationContainer);
-
-    // Highlight correct answer
-    const optionButtons = document.querySelectorAll(".option");
-    optionButtons.forEach((btn) => {
-        if (btn.innerText === questionData.answer) {
-            btn.classList.add("correct");
-        }
-    });
-
-    // Show Next Button
-    document.getElementById("nextButton").style.display = "block";
+    document.getElementById("nextButton").style.display = "block"; // Show Next Button after answering
 }
 
 function nextQuestion() {
     currentQuestionIndex++;
     if (currentQuestionIndex < questions.length) {
+        answered = false;
         displayQuestion();
     } else {
-        showScore();
+        document.getElementById('quiz-container').innerHTML = `<h2>Your Score: ${score}/${questions.length}</h2><p>Thanks for playing! Refresh the page to try again.</p>`;
     }
 }
 
-function showScore() {
-    document.getElementById('quiz-container').innerHTML = `
-        <h2>Your Score: ${score}/${questions.length}</h2>
-        <p>Thanks for playing! Refresh the page to try again.</p>
-    `;
-}
-
-// Initialize quiz
-document.addEventListener("DOMContentLoaded", displayQuestion);
+document.addEventListener("DOMContentLoaded", () => {
+    displayQuestion();
+    document.getElementById("nextButton").addEventListener("click", nextQuestion);
+});
