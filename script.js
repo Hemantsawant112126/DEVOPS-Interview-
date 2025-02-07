@@ -62,12 +62,17 @@ function displayQuestion() {
     });
 
     // Add Next Button but hide it initially
-    const nextButton = document.createElement("button");
-    nextButton.innerText = "Next Question";
-    nextButton.id = "nextButton";
-    nextButton.style.display = "none"; // Hidden until answer is selected
-    nextButton.onclick = nextQuestion;
-    document.getElementById("quiz-container").appendChild(nextButton);
+    let nextButton = document.getElementById("nextButton");
+    if (!nextButton) {
+        nextButton = document.createElement("button");
+        nextButton.innerText = "Next Question";
+        nextButton.id = "nextButton";
+        nextButton.style.display = "none"; // Hidden until answer is selected
+        nextButton.onclick = nextQuestion;
+        document.getElementById("quiz-container").appendChild(nextButton);
+    } else {
+        nextButton.style.display = "none"; // Hide when new question loads
+    }
 
     answered = false;
 }
@@ -84,10 +89,10 @@ function checkAnswer(selectedOption, button) {
 
     if (selectedOption === questionData.answer) {
         score++;
-        button.style.backgroundColor = "green";
+        button.classList.add("correct");
         explanationContainer.innerHTML += `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
     } else {
-        button.style.backgroundColor = "red";
+        button.classList.add("incorrect");
         explanationContainer.innerHTML += `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
     }
 
@@ -103,7 +108,7 @@ function checkAnswer(selectedOption, button) {
     const optionButtons = document.querySelectorAll(".option");
     optionButtons.forEach((btn) => {
         if (btn.innerText === questionData.answer) {
-            btn.style.backgroundColor = "blue";
+            btn.classList.add("correct");
         }
     });
 
