@@ -16,12 +16,35 @@ const questions = [
                 "A cloud service provider": "DevOps can be implemented on cloud platforms but is not itself a cloud provider."
             }
         }
+    },
+    {
+        question: "Explain Continuous Integration (CI) and Continuous Delivery (CD).",
+        options: [
+            "A method for manually merging code",
+            "A process for integrating and deploying code changes automatically",
+            "A type of software testing",
+            "A version control system"
+        ],
+        answer: "A process for integrating and deploying code changes automatically",
+        explanation: {
+            correct: "CI involves frequent integration of code changes into a shared repository with automated tests, while CD ensures code is always in a deployable state.",
+            incorrect: {
+                "A method for manually merging code": "CI/CD automates the integration and deployment process, reducing manual work.",
+                "A type of software testing": "CI/CD includes automated testing but is not solely a testing process.",
+                "A version control system": "Version control systems like Git help with CI/CD, but they are not the same concept."
+            }
+        }
     }
 ];
 
 let currentQuestionIndex = 0;
 let score = 0;
 let answered = false;
+
+document.addEventListener("DOMContentLoaded", () => {
+    displayQuestion();
+    document.getElementById("nextButton").addEventListener("click", nextQuestion);
+});
 
 function displayQuestion() {
     const questionData = questions[currentQuestionIndex];
@@ -39,8 +62,7 @@ function displayQuestion() {
         optionsContainer.appendChild(button);
     });
 
-    const nextButton = document.getElementById("nextButton");
-    nextButton.style.display = "none"; // Hide Next Button initially
+    document.getElementById("nextButton").style.display = "none"; // Hide Next Button initially
 }
 
 function checkAnswer(selectedOption, button) {
@@ -72,8 +94,3 @@ function nextQuestion() {
         document.getElementById('quiz-container').innerHTML = `<h2>Your Score: ${score}/${questions.length}</h2><p>Thanks for playing! Refresh the page to try again.</p>`;
     }
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-    displayQuestion();
-    document.getElementById("nextButton").addEventListener("click", nextQuestion);
-});
