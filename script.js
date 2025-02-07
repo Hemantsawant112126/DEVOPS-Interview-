@@ -17,67 +17,75 @@ let score = 0;
 let answered = false;
 
 function displayQuestion() {
-    console.log("Displaying question..."); // Debugging log
     const questionData = questions[currentQuestionIndex];
-    console.log("Question: ", questionData.question); // Debugging log
 
     // Set question text
     document.getElementById('question').innerText = questionData.question;
 
     // Clear previous options
     const optionsContainer = document.getElementById('options');
-    optionsContainer.innerHTML = '';
+    optionsContainer.innerHTML = "";
 
-    // Add new options
-    questionData.options.forEach(option => {
-        const optionElement = document.createElement('div');
-        optionElement.classList.add('option');
-        optionElement.innerText = option;
-        optionElement.onclick = () => selectAnswer(option);
-        optionsContainer.appendChild(optionElement);
+    // Display options
+    questionData.options.forEach((option, index) => {
+        const button = document.createElement("button");
+        button.innerText = option;
+        button.classList.add("option");
+        button.setAttribute("tabindex", "0"); // Make it focusable
+        button.onclick = () => checkAnswer(option, button);
+        optionsContainer.appendChild(button);
     });
 
-    // Disable the "Next" button until an option is selected
-    document.getElementById('submit-btn').disabled = true;
     answered = false;
-
-    console.log("Question displayed. Options added."); // Debugging log
 }
 
-function selectAnswer(selectedOption) {
-    if (answered) return; // Prevent multiple answers for the same question
+function checkAnswer(selectedOption, button) {
+    if (answered) return;
+    answered = true;
 
-    console.log("Option selected: ", selectedOption); // Debugging log
     const questionData = questions[currentQuestionIndex];
 
     if (selectedOption === questionData.answer) {
         score++;
-        console.log("Correct Answer! Current Score: ", score); // Debugging log
+        button.style.backgroundColor = "green";
     } else {
-        console.log("Incorrect Answer!"); // Debugging log
+        button.style.backgroundColor = "red";
     }
 
-    // Disable all options after selection
-    const options = document.querySelectorAll('.option');
-    options.forEach(option => {
-        option.style.pointerEvents = 'none'; // Disable clicking
-    });
-
-    // Enable the "Next" button
-    document.getElementById('submit-btn').disabled = false;
-    answered = true;
-
-    console.log("Next button enabled. Waiting for user to move to the next question."); // Debugging log
-}
-
-function nextQuestion() {
-    console.log("Next Question clicked..."); // Debugging log
-    if (currentQuestionIndex < questions.length - 1) {
+    setTimeout(() => {
         currentQuestionIndex++;
-        displayQuestion();
-    } else {
-        alert(`Quiz Completed! Your score: ${score}/${questions.length}`);
-    }
+        if (currentQuestionIndex < questions.length) {
+            displayQuestion();
+        } else {
+            showScore();
+        }
+    }, 1000);
 }
 
-displayQuestion(); // Initial call to display the first question
+function showScore() {
+    document.getElementById('quiz-container').innerHTML = `<h2>Your Score: ${score}/${questions.length}</h2>`;
+}
+
+// Handle Tab key navigation for options
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Tab") {
+        event.preventDefault(); // Prevent default tab behavior
+        moveSelection();
+    }
+});
+
+function moveSelection() {
+    const options = document.querySelectorAll(".option");
+    let selectedIndex = Array.from(options).findIndex(option => option.classList.contains("selected"));
+
+    if (selectedIndex !== -1) {
+        options[selectedIndex].classList.remove("selected");
+    }
+
+    let newIndex = (selectedIndex + 1) % options.length;
+    options[newIndex].classList.add("selected");
+    options[newIndex].focus();
+}
+
+// Initialize the quiz
+document.addEventListener("DOMContentLoaded", displayQuestion);
