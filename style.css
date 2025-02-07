@@ -11,7 +11,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
+    max-width: 600px;
     margin: auto;
 }
 
@@ -24,7 +24,7 @@ body {
 .option {
     display: block;
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 10px 0;
     background: #e0e0e0;
     border: none;
@@ -38,8 +38,14 @@ body {
     background: #d0d0d0;
 }
 
-.option.selected {
-    background: #b0b0b0;
+.correct {
+    background-color: green !important;
+    color: white;
+}
+
+.incorrect {
+    background-color: red !important;
+    color: white;
 }
 
 #result {
@@ -47,12 +53,20 @@ body {
     font-size: 18px;
 }
 
-.correct {
-    color: green;
-    font-weight: bold;
+#nextButton {
+    display: none;
+    background-color: blue;
+    color: white;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    position: relative;
+    float: right; /* Moves the button to the right */
 }
 
-.incorrect {
-    color: red;
-    font-weight: bold;
+#nextButton:hover {
+    background-color: darkblue;
 }
