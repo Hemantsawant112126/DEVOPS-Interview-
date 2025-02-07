@@ -14,14 +14,21 @@ const questions = [
 
 let currentQuestionIndex = 0;
 let score = 0;
-let answered = false; // Track if an answer has been selected
+let answered = false;
 
 function displayQuestion() {
+    console.log("Displaying question..."); // Debugging log
     const questionData = questions[currentQuestionIndex];
+    console.log("Question: ", questionData.question); // Debugging log
+
+    // Set question text
     document.getElementById('question').innerText = questionData.question;
 
+    // Clear previous options
     const optionsContainer = document.getElementById('options');
-    optionsContainer.innerHTML = ''; // Clear previous options
+    optionsContainer.innerHTML = '';
+
+    // Add new options
     questionData.options.forEach(option => {
         const optionElement = document.createElement('div');
         optionElement.classList.add('option');
@@ -33,14 +40,21 @@ function displayQuestion() {
     // Disable the "Next" button until an option is selected
     document.getElementById('submit-btn').disabled = true;
     answered = false;
+
+    console.log("Question displayed. Options added."); // Debugging log
 }
 
 function selectAnswer(selectedOption) {
     if (answered) return; // Prevent multiple answers for the same question
 
+    console.log("Option selected: ", selectedOption); // Debugging log
     const questionData = questions[currentQuestionIndex];
+
     if (selectedOption === questionData.answer) {
         score++;
+        console.log("Correct Answer! Current Score: ", score); // Debugging log
+    } else {
+        console.log("Incorrect Answer!"); // Debugging log
     }
 
     // Disable all options after selection
@@ -52,9 +66,12 @@ function selectAnswer(selectedOption) {
     // Enable the "Next" button
     document.getElementById('submit-btn').disabled = false;
     answered = true;
+
+    console.log("Next button enabled. Waiting for user to move to the next question."); // Debugging log
 }
 
 function nextQuestion() {
+    console.log("Next Question clicked..."); // Debugging log
     if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
         displayQuestion();
@@ -63,4 +80,4 @@ function nextQuestion() {
     }
 }
 
-displayQuestion();
+displayQuestion(); // Initial call to display the first question
