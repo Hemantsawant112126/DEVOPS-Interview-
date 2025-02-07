@@ -1,15 +1,40 @@
 const questions = [
     {
         question: "What is the primary function of Git in a DevOps environment?",
-        options: ["To monitor system performance", "To automate code delivery", "To track code changes", "To manage cloud infrastructure"],
-        answer: "To track code changes"
+        options: [
+            "To monitor system performance",
+            "To automate code delivery",
+            "To track code changes",
+            "To manage cloud infrastructure"
+        ],
+        answer: "To track code changes",
+        explanation: {
+            correct: "Git is used for version control, allowing developers to track and manage changes in code.",
+            incorrect: {
+                "To monitor system performance": "System performance monitoring is done using tools like Prometheus and Grafana, not Git.",
+                "To automate code delivery": "CI/CD tools like Jenkins or GitHub Actions automate delivery, but Git mainly tracks code changes.",
+                "To manage cloud infrastructure": "Infrastructure management is done using tools like Terraform or Kubernetes, not Git."
+            }
+        }
     },
     {
         question: "What is Docker?",
-        options: ["A cloud service", "A version control tool", "A containerization platform", "A networking tool"],
-        answer: "A containerization platform"
-    },
-    // Add more questions here...
+        options: [
+            "A cloud service",
+            "A version control tool",
+            "A containerization platform",
+            "A networking tool"
+        ],
+        answer: "A containerization platform",
+        explanation: {
+            correct: "Docker is used to package applications into containers for consistent deployment across environments.",
+            incorrect: {
+                "A cloud service": "Docker itself is not a cloud service, but it can be used in cloud-based environments.",
+                "A version control tool": "Git, not Docker, is a version control tool.",
+                "A networking tool": "Docker has networking capabilities, but its primary function is containerization."
+            }
+        }
+    }
 ];
 
 let currentQuestionIndex = 0;
@@ -19,19 +44,19 @@ let answered = false;
 function displayQuestion() {
     const questionData = questions[currentQuestionIndex];
 
-    // Set question text
     document.getElementById('question').innerText = questionData.question;
 
-    // Clear previous options
     const optionsContainer = document.getElementById('options');
     optionsContainer.innerHTML = "";
 
-    // Display options
-    questionData.options.forEach((option, index) => {
+    const resultContainer = document.getElementById('result');
+    resultContainer.innerHTML = ""; // Clear previous result messages
+
+    questionData.options.forEach((option) => {
         const button = document.createElement("button");
         button.innerText = option;
         button.classList.add("option");
-        button.setAttribute("tabindex", "0"); // Make it focusable
+        button.setAttribute("tabindex", "0");
         button.onclick = () => checkAnswer(option, button);
         optionsContainer.appendChild(button);
     });
@@ -44,12 +69,23 @@ function checkAnswer(selectedOption, button) {
     answered = true;
 
     const questionData = questions[currentQuestionIndex];
+    const resultContainer = document.getElementById('result');
 
     if (selectedOption === questionData.answer) {
         score++;
         button.style.backgroundColor = "green";
+        resultContainer.innerHTML = `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
     } else {
         button.style.backgroundColor = "red";
+        resultContainer.innerHTML = `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
+
+        // Highlight the correct answer
+        const optionButtons = document.querySelectorAll(".option");
+        optionButtons.forEach((btn) => {
+            if (btn.innerText === questionData.answer) {
+                btn.style.backgroundColor = "blue";
+            }
+        });
     }
 
     setTimeout(() => {
@@ -59,17 +95,20 @@ function checkAnswer(selectedOption, button) {
         } else {
             showScore();
         }
-    }, 1000);
+    }, 2500);
 }
 
 function showScore() {
-    document.getElementById('quiz-container').innerHTML = `<h2>Your Score: ${score}/${questions.length}</h2>`;
+    document.getElementById('quiz-container').innerHTML = `
+        <h2>Your Score: ${score}/${questions.length}</h2>
+        <p>Thanks for playing! Refresh the page to try again.</p>
+    `;
 }
 
-// Handle Tab key navigation for options
+// Tab key navigation for options
 document.addEventListener("keydown", function (event) {
     if (event.key === "Tab") {
-        event.preventDefault(); // Prevent default tab behavior
+        event.preventDefault();
         moveSelection();
     }
 });
