@@ -34,42 +34,6 @@ const questions = [
                 "Load balancing": "Load balancers distribute traffic but Docker packages applications."
             }
         }
-    },
-    {
-        question: "What is DevOps?",
-        options: [
-            "A programming language",
-            "A set of practices for software development and IT operations",
-            "A database management system",
-            "A cloud service provider"
-        ],
-        answer: "A set of practices for software development and IT operations",
-        explanation: {
-            correct: "DevOps is a combination of cultural philosophies, practices, and tools that increases an organization's ability to deliver applications and services at high velocity.",
-            incorrect: {
-                "A programming language": "DevOps is not a programming language; it is a methodology that integrates development and operations teams.",
-                "A database management system": "While databases are a part of DevOps, DevOps itself is a broader methodology encompassing development and operations practices.",
-                "A cloud service provider": "DevOps can be implemented on cloud platforms, but it is not a cloud service provider itself."
-            }
-        }
-    },
-    {
-        question: "What is Continuous Integration (CI) and Continuous Delivery (CD)?",
-        options: [
-            "Manually merging code",
-            "A process for integrating and deploying code changes automatically",
-            "A cloud service for hosting repositories",
-            "A type of software license"
-        ],
-        answer: "A process for integrating and deploying code changes automatically",
-        explanation: {
-            correct: "Continuous Integration (CI) involves automatically merging code changes, running tests, and preparing the application for deployment. Continuous Delivery (CD) ensures that code is always in a deployable state and can be released at any time.",
-            incorrect: {
-                "Manually merging code": "CI/CD automates the integration and deployment process, reducing the need for manual merges.",
-                "A cloud service for hosting repositories": "While services like GitHub and GitLab support CI/CD, they are not CI/CD themselves.",
-                "A type of software license": "CI/CD is a practice, not a licensing model."
-            }
-        }
     }
 ];
 
@@ -86,26 +50,28 @@ function displayQuestion() {
     optionsContainer.innerHTML = "";
 
     const resultContainer = document.getElementById('result');
-    resultContainer.innerHTML = "";
+    resultContainer.innerHTML = ""; // Clear previous result messages
 
     questionData.options.forEach((option) => {
         const button = document.createElement("button");
         button.innerText = option;
         button.classList.add("option");
+        button.setAttribute("tabindex", "0");
         button.onclick = () => checkAnswer(option, button);
         optionsContainer.appendChild(button);
     });
 
+    // Add Next Button but hide it initially
     let nextButton = document.getElementById("nextButton");
     if (!nextButton) {
         nextButton = document.createElement("button");
         nextButton.innerText = "Next Question";
         nextButton.id = "nextButton";
-        nextButton.style.display = "none";
+        nextButton.style.display = "none"; // Hidden until answer is selected
         nextButton.onclick = nextQuestion;
         document.getElementById("quiz-container").appendChild(nextButton);
     } else {
-        nextButton.style.display = "none";
+        nextButton.style.display = "none"; // Hide when new question loads
     }
 
     answered = false;
@@ -117,7 +83,7 @@ function checkAnswer(selectedOption, button) {
 
     const questionData = questions[currentQuestionIndex];
     const resultContainer = document.getElementById('result');
-    resultContainer.innerHTML = "";
+    resultContainer.innerHTML = ""; // Clear previous result messages
 
     const explanationContainer = document.createElement("div");
 
@@ -130,7 +96,23 @@ function checkAnswer(selectedOption, button) {
         explanationContainer.innerHTML += `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
     }
 
+    // Show explanations for all options
+    explanationContainer.innerHTML += "<h4>Why other options are incorrect?</h4>";
+    Object.keys(questionData.explanation.incorrect).forEach((option) => {
+        explanationContainer.innerHTML += `<p><strong>${option}:</strong> ${questionData.explanation.incorrect[option]}</p>`;
+    });
+
     resultContainer.appendChild(explanationContainer);
+
+    // Highlight correct answer
+    const optionButtons = document.querySelectorAll(".option");
+    optionButtons.forEach((btn) => {
+        if (btn.innerText === questionData.answer) {
+            btn.classList.add("correct");
+        }
+    });
+
+    // Show Next Button
     document.getElementById("nextButton").style.display = "block";
 }
 
@@ -150,4 +132,5 @@ function showScore() {
     `;
 }
 
+// Initialize quiz
 document.addEventListener("DOMContentLoaded", displayQuestion);
