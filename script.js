@@ -73,15 +73,23 @@ function checkAnswer(selectedOption, button) {
     const resultContainer = document.getElementById('result');
     resultContainer.innerHTML = "";
     
+    let explanationHTML = "";
     if (selectedOption === questionData.answer) {
         score++;
         button.classList.add("correct");
-        resultContainer.innerHTML = `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
+        explanationHTML += `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
     } else {
         button.classList.add("incorrect");
-        resultContainer.innerHTML = `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
+        explanationHTML += `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
     }
 
+    // Show explanations for all options
+    explanationHTML += "<h4>Explanation for all options:</h4>";
+    Object.keys(questionData.explanation.incorrect).forEach((option) => {
+        explanationHTML += `<p><strong>${option}:</strong> ${questionData.explanation.incorrect[option]}</p>`;
+    });
+
+    resultContainer.innerHTML = explanationHTML;
     document.getElementById("nextButton").style.display = "block"; // Show Next Button after answering
 }
 
