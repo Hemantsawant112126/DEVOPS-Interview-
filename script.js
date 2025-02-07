@@ -9,18 +9,19 @@ const questions = [
         options: ["A cloud service", "A version control tool", "A containerization platform", "A networking tool"],
         answer: "A containerization platform"
     },
-    // Add questions here until you reach 300
+    // Add more questions here...
 ];
 
 let currentQuestionIndex = 0;
 let score = 0;
+let answered = false; // Track if an answer has been selected
 
 function displayQuestion() {
     const questionData = questions[currentQuestionIndex];
     document.getElementById('question').innerText = questionData.question;
 
     const optionsContainer = document.getElementById('options');
-    optionsContainer.innerHTML = '';
+    optionsContainer.innerHTML = ''; // Clear previous options
     questionData.options.forEach(option => {
         const optionElement = document.createElement('div');
         optionElement.classList.add('option');
@@ -28,22 +29,35 @@ function displayQuestion() {
         optionElement.onclick = () => selectAnswer(option);
         optionsContainer.appendChild(optionElement);
     });
+
+    // Disable the "Next" button until an option is selected
+    document.getElementById('submit-btn').disabled = true;
+    answered = false;
 }
 
 function selectAnswer(selectedOption) {
+    if (answered) return; // Prevent multiple answers for the same question
+
     const questionData = questions[currentQuestionIndex];
     if (selectedOption === questionData.answer) {
         score++;
     }
-    document.querySelectorAll('.option').forEach(option => option.style.pointerEvents = 'none');
+
+    // Disable all options after selection
+    const options = document.querySelectorAll('.option');
+    options.forEach(option => {
+        option.style.pointerEvents = 'none'; // Disable clicking
+    });
+
+    // Enable the "Next" button
     document.getElementById('submit-btn').disabled = false;
+    answered = true;
 }
 
 function nextQuestion() {
     if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
         displayQuestion();
-        document.getElementById('submit-btn').disabled = true;
     } else {
         alert(`Quiz Completed! Your score: ${score}/${questions.length}`);
     }
