@@ -63,7 +63,6 @@ body {
     border-radius: 5px;
     cursor: pointer;
     margin-top: 20px;
-    position: relative;
     float: right; /* Moves the button to the right */
 }
 
