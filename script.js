@@ -34,62 +34,7 @@ const questions = [
                 "Load balancing": "Load balancers distribute traffic but Docker packages applications."
             }
         }
-    },
-    {
-        question: "Which tool is used for Continuous Integration in DevOps?",
-        options: [
-            "Jenkins",
-            "Git",
-            "Docker",
-            "Kubernetes"
-        ],
-        answer: "Jenkins",
-        explanation: {
-            correct: "Jenkins is an automation server widely used for Continuous Integration and Continuous Deployment (CI/CD).",
-            incorrect: {
-                "Git": "Git is a version control system, not a CI/CD tool.",
-                "Docker": "Docker is used for containerization, not CI/CD.",
-                "Kubernetes": "Kubernetes is used for orchestrating containers, not CI/CD."
-            }
-        }
-    },
-    {
-        question: "Which DevOps tool is primarily used for configuration management?",
-        options: [
-            "Ansible",
-            "Docker",
-            "Kubernetes",
-            "Terraform"
-        ],
-        answer: "Ansible",
-        explanation: {
-            correct: "Ansible is an automation tool used for configuration management, application deployment, and task automation.",
-            incorrect: {
-                "Docker": "Docker is used for containerization, not configuration management.",
-                "Kubernetes": "Kubernetes is for container orchestration, not configuration management.",
-                "Terraform": "Terraform is an Infrastructure as Code (IaC) tool, not a configuration manager."
-            }
-        }
-    },
-    {
-        question: "What is Kubernetes used for?",
-        options: [
-            "Source code management",
-            "Orchestrating containers",
-            "Monitoring logs",
-            "Automating testing"
-        ],
-        answer: "Orchestrating containers",
-        explanation: {
-            correct: "Kubernetes is an open-source container orchestration system that automates the deployment, scaling, and management of containerized applications.",
-            incorrect: {
-                "Source code management": "Git is used for source code management, not Kubernetes.",
-                "Monitoring logs": "Monitoring tools like Prometheus and ELK stack are used for log management.",
-                "Automating testing": "Testing automation is handled by tools like Selenium and JUnit, not Kubernetes."
-            }
-        }
-    },
-    // ADD 45 MORE QUESTIONS HERE...
+    }
 ];
 
 let currentQuestionIndex = 0;
@@ -116,6 +61,14 @@ function displayQuestion() {
         optionsContainer.appendChild(button);
     });
 
+    // Add Next Button but hide it initially
+    const nextButton = document.createElement("button");
+    nextButton.innerText = "Next Question";
+    nextButton.id = "nextButton";
+    nextButton.style.display = "none"; // Hidden until answer is selected
+    nextButton.onclick = nextQuestion;
+    document.getElementById("quiz-container").appendChild(nextButton);
+
     answered = false;
 }
 
@@ -125,32 +78,46 @@ function checkAnswer(selectedOption, button) {
 
     const questionData = questions[currentQuestionIndex];
     const resultContainer = document.getElementById('result');
+    resultContainer.innerHTML = ""; // Clear previous result messages
+
+    const explanationContainer = document.createElement("div");
 
     if (selectedOption === questionData.answer) {
         score++;
         button.style.backgroundColor = "green";
-        resultContainer.innerHTML = `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
+        explanationContainer.innerHTML += `<p class="correct"><strong>Correct!</strong> ${questionData.explanation.correct}</p>`;
     } else {
         button.style.backgroundColor = "red";
-        resultContainer.innerHTML = `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
-
-        // Highlight the correct answer
-        const optionButtons = document.querySelectorAll(".option");
-        optionButtons.forEach((btn) => {
-            if (btn.innerText === questionData.answer) {
-                btn.style.backgroundColor = "blue";
-            }
-        });
+        explanationContainer.innerHTML += `<p class="incorrect"><strong>Incorrect.</strong> ${questionData.explanation.incorrect[selectedOption]}</p>`;
     }
 
-    setTimeout(() => {
-        currentQuestionIndex++;
-        if (currentQuestionIndex < questions.length) {
-            displayQuestion();
-        } else {
-            showScore();
+    // Show explanations for all options
+    explanationContainer.innerHTML += "<h4>Why other options are incorrect?</h4>";
+    Object.keys(questionData.explanation.incorrect).forEach((option) => {
+        explanationContainer.innerHTML += `<p><strong>${option}:</strong> ${questionData.explanation.incorrect[option]}</p>`;
+    });
+
+    resultContainer.appendChild(explanationContainer);
+
+    // Highlight correct answer
+    const optionButtons = document.querySelectorAll(".option");
+    optionButtons.forEach((btn) => {
+        if (btn.innerText === questionData.answer) {
+            btn.style.backgroundColor = "blue";
         }
-    }, 2500);
+    });
+
+    // Show Next Button
+    document.getElementById("nextButton").style.display = "block";
+}
+
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+        displayQuestion();
+    } else {
+        showScore();
+    }
 }
 
 function showScore() {
@@ -160,4 +127,5 @@ function showScore() {
     `;
 }
 
+// Initialize quiz
 document.addEventListener("DOMContentLoaded", displayQuestion);
